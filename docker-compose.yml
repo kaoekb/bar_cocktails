@@ -6,4 +6,6 @@ services:
     environment:
       - TOKEN_TG=${TOKEN_TG}
       - OPENAI_KEY=${OPENAI_KEY}
+    volumes:
+      - ./logs:/app/logs
     restart: unless-stopped
