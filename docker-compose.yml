@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  scandi-bot:
+  name_scandi_bot:
     build: .
     environment:
       - TOKEN_TG=${TOKEN_TG}
