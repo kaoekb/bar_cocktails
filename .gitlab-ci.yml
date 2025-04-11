@@ -4,8 +4,8 @@ services:
   - docker:dind
 
 variables:
-  DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
 
 stages:
   - cleanup
@@ -24,12 +24,14 @@ cleanup-old-images:
 build-job:
   stage: build
   script:
-    - echo "🔧 Собираем новый образ..."
+    - echo "🔧 Собираем новый образ name_scandi_bot..."
     - docker build -t name_scandi_bot .
 
 deploy-job:
   stage: deploy
   script:
-    - echo "🚀 Запуск docker-compose..."
+    - echo "🚀 Запускаем docker-compose..."
     - docker-compose down || true
     - docker-compose up -d --build
+  only:
+    - main
