@@ -4,18 +4,14 @@ import telebot
 from dotenv import load_dotenv
 import openai
 
-# Загрузка переменных окружения из .env
 load_dotenv()
 TOKEN_TG = os.getenv("TOKEN_TG")
 OPENAI_KEY = os.getenv("OPENAI_KEY")
 
-# Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# Инициализация OpenAI клиента
 client = openai.OpenAI(api_key=OPENAI_KEY)
 
-# Инициализация бота
 bot = telebot.TeleBot(TOKEN_TG)
 
 @bot.message_handler(commands=['start'])
