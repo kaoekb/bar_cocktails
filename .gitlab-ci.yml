@@ -1,52 +1,36 @@
-# image: docker:latest
+image: docker:latest
 
-# services:
-#   - docker:dind
+services:
+  - docker:dind
 
-# variables:
-#   DOCKER_TLS_CERTDIR: ""
-#   DOCKER_DRIVER: overlay2
-
-# stages:
-#   - cleanup
-#   - build
-#   - deploy
-
-# cleanup-old-images:
-#   stage: cleanup
-#   script:
-#     - echo "🧹 Удаляем старые образы name_scandi_bot..."
-#     - docker image prune -f || true
-#     - docker images "name_scandi_bot" --format "{{.ID}}" | tail -n +2 | xargs --no-run-if-empty docker rmi || true
-#   only:
-#     - main
-
-# build-job:
-#   stage: build
-#   script:
-#     - echo "🔧 Собираем новый образ name_scandi_bot..."
-#     - docker build -t name_scandi_bot .
-
-# deploy-job:
-#   stage: deploy
-#   script:
-#     - echo "🚀 Запускаем docker-compose..."
-#     - docker-compose down || true
-#     - docker-compose up -d --build
-#   only:
-#     - main
-
+variables:
+  DOCKER_DRIVER: overlay2
 
 stages:
+  - cleanup
   - build
   - deploy
+
+cleanup-old-images:
+  stage: cleanup
+  script:
+    - echo "🧹 Удаляем старые образы name_scandi_bot..."
+    - docker image prune -f || true
+    - docker rmi $(docker images "name_scandi_bot" --format "{{.ID}}" | tail -n +2) || true
+  only:
+    - main
 
 build-job:
   stage: build
   script:
-    docker build -t name_scandi_bot .
+    - echo "🔧 Собираем новый образ..."
+    - docker build -t name_scandi_bot .
 
 deploy-job:
   stage: deploy
   script:
-    docker-compose up -d
+    - echo "🚀 Запуск docker-compose..."
+    - docker-compose down || true
+    - docker-compose up -d --build
+  only:
+    - main
