@@ -14,9 +14,9 @@ stages:
 cleanup-old-images:
   stage: cleanup
   script:
-    - echo "🧹 Удаляем старые образы name_scandi_bot..."
+    - echo "🧹 Удаляем старые образы name_test_bot..."
     - docker image prune -f || true
-    - docker rmi $(docker images "name_scandi_bot" --format "{{.ID}}" | tail -n +2) || true
+    - docker rmi $(docker images "name_test_bot" --format "{{.ID}}" | tail -n +2) || true
   only:
     - main
 
@@ -24,7 +24,7 @@ build-job:
   stage: build
   script:
     - echo "🔧 Собираем новый образ..."
-    - docker build -t name_scandi_bot .
+    - docker build -t name_test_bot .
 
 deploy-job:
   stage: deploy
