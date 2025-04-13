@@ -39,31 +39,31 @@ def generate_image_url(client, prompt: str) -> str:
 #     output.seek(0)
 #     return output
 
-# def generate_image_sticker(client, prompt: str) -> BytesIO:
-#     image_url = generate_image_url(client, prompt)
-#     image_data = requests.get(image_url).content
-#     img = Image.open(BytesIO(image_data)).convert("RGBA")
-
-#     output = BytesIO()
-#     img.save(output, format="PNG")
-#     output.name = "sticker.png"
-#     output.seek(0)
-#     return output
-
 def generate_image_sticker(client, prompt: str) -> BytesIO:
     image_url = generate_image_url(client, prompt)
     image_data = requests.get(image_url).content
     img = Image.open(BytesIO(image_data)).convert("RGBA")
 
-    # Приводим размер к максимуму 512x512
-    max_size = (512, 512)
-    img.thumbnail(max_size, Image.LANCZOS)
-
     output = BytesIO()
-    img.save(output, format="WEBP", lossless=True)
-    output.name = "sticker.webp"
+    img.save(output, format="PNG")
+    output.name = "sticker.png"
     output.seek(0)
     return output
+
+# def generate_image_sticker(client, prompt: str) -> BytesIO:
+#     image_url = generate_image_url(client, prompt)
+#     image_data = requests.get(image_url).content
+#     img = Image.open(BytesIO(image_data)).convert("RGBA")
+
+#     # Приводим размер к максимуму 512x512
+#     max_size = (512, 512)
+#     img.thumbnail(max_size, Image.LANCZOS)
+
+#     output = BytesIO()
+#     img.save(output, format="WEBP", lossless=True)
+#     output.name = "sticker.webp"
+#     output.seek(0)
+#     return output
 
 # def generate_image_sticker(client, prompt: str) -> BytesIO:
 #     image_url = generate_image_url(client, prompt)
