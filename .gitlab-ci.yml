@@ -7,18 +7,18 @@ variables:
   DOCKER_DRIVER: overlay2
 
 stages:
-  - cleanup
+  # - cleanup
   - build
   - deploy
 
-cleanup-old-images:
-  stage: cleanup
-  script:
-    - echo "🧹 Удаляем старые образы name_test_bot..."
-    - docker image prune -f || true
-    - docker rmi $(docker images "name_test_bot" --format "{{.ID}}" | tail -n +2) || true
-  only:
-    - main
+# cleanup-old-images:
+#   stage: cleanup
+#   script:
+#     - echo "🧹 Удаляем старые образы name_test_bot..."
+#     - docker image prune -f || true
+#     - docker rmi $(docker images "name_test_bot" --format "{{.ID}}" | tail -n +2) || true
+#   only:
+#     - main
 
 build-job:
   stage: build
