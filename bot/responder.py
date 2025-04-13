@@ -2,7 +2,7 @@ import openai
 from PIL import Image
 import requests
 from io import BytesIO
-from rembg import remove
+# from rembg import remove
 
 
 def get_openai_client(api_key: str):
