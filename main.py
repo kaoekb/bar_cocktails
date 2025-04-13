@@ -1,7 +1,7 @@
 import os
 import logging
-import telebot
 import random
+import telebot
 
 from dotenv import load_dotenv
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -9,7 +9,7 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 from bot.cocktails import cocktails
 from bot.notifier import notify_admin
-from bot.responder import get_openai_client, generate_response
+from bot.responder import get_openai_client, generate_response, generate_image
 
 # Логирование
 os.makedirs("logs", exist_ok=True)
@@ -34,7 +34,6 @@ if not TOKEN_TG or not OPENAI_KEY:
 bot = telebot.TeleBot(TOKEN_TG)
 client = get_openai_client(OPENAI_KEY)
 
-
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -46,7 +45,6 @@ def start(message):
         "🌟 Или выбери, куда хочешь отправиться:",
         reply_markup=markup
     )
-
 
 @bot.message_handler(func=lambda message: message.text == "🌍 Открыть меню миров")
 def menu_button_handler(message):
@@ -72,31 +70,33 @@ def handle_message(message):
 
     user_input = message.text.strip()
     username = message.from_user.username or "без ника"
-
     chosen = random.choice(cocktails)
 
-    # prompt = (
-    #     f"Выбери коктейль из списка: {', '.join(cocktails)}.\n"
-    #     f"Согласно моему имени «{user_input}», шуточно докажи, "
-    #     f"что мне нужно выпить именно «{chosen}»."
-    # )
-
-    prompt = (
-        f"Имя пользователя: {user_input}.\n"
-        f"Коктейль: {chosen}.\n"
-        f"Придумай шуточное, но правдоподобное объяснение, почему именно этот коктейль или настойка подходит этому человеку. "
-        f"Пиши от имени бармена, можешь использовать юмор, легкую иронию и вдохновляющий стиль."
-    )
     logging.info(f"Запрос от @{username}: {user_input}")
 
     try:
+        # Генерация текста
+        prompt = (
+            f"Имя пользователя: {user_input}.\n"
+            f"Коктейль: {chosen}.\n"
+            f"Придумай шуточное, но правдоподобное объяснение, почему именно этот коктейль или настойка подходит этому человеку. "
+            f"Пиши от имени бармена, можешь использовать юмор, легкую иронию и вдохновляющий стиль."
+        )
         response = generate_response(client, prompt)
         bot.send_message(message.chat.id, response)
+
+        # Генерация ведьминского арта
+        image_prompt = (
+            f"Ведьминский дарк-фэнтези арт, где имя «{user_input}» написано на книге, зелье или амулете. "
+            f"Атмосфера магии, свечи, дым, луна, лес, таинственный свет. Высокая детализация, стиль dark fantasy."
+        )
+        image_url = generate_image(client, image_prompt)
+        bot.send_photo(message.chat.id, image_url)
+
     except Exception as e:
-        logging.exception("Ошибка при генерации ответа")
+        logging.exception("Ошибка при генерации ответа или изображения")
         bot.send_message(message.chat.id, "⚠️ Упс! Что-то пошло не так.")
         notify_admin(f"❌ Ошибка у @{username}:\n{e}")
-
 
 if __name__ == "__main__":
     try:
