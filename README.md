@@ -1,7 +1,2 @@
-.
-├── bot.py
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── .env
-├── .gitlab-ci.yml
+Бот предлагающий напиток согласно вашего имени, генерирует релевантную картинку и стикер.
+Меню заранее подготовленно в bot/cocktails.py
